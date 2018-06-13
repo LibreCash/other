@@ -1,0 +1,20 @@
+{
+    "apiKey": "KEY",
+    "apiSecret": "SECRET",
+    "testnet": false,
+
+	"wallets":{
+		"bitcoin":{
+			"wallet": "WalletName",
+			"password": "AmazingPassword",
+			"minAmount": 10000,
+			"withdraw": "BTC_ADDRESS"
+		},
+		"bitcoincash":{
+			"wallet": "WalletName",
+			"password": "AmazingPassword",
+			"minAmount": 10000,
+			"withdraw": "BCH_ADDRESS"
+		}
+	}
+}
