@@ -14,8 +14,7 @@ var
 	},
 	options = {
 		forcefee: 3000
-	},
-	ADDITIONAL = 1000;
+	};
 
 async function init() {
 	try {
@@ -78,9 +77,9 @@ async function withdrawBTC() {
 		curConfig = config.wallets.bitcoin,
 		pay = {},
 		balance = balances.bitcoin,
-		pending = balance.pending,
-		allowZeroConf = true,
-		allowZeroConfSelf = true,
+		pending = balance.pending;
+
+	try {	
     	amount = (balance.confirmed > 0) ? 
     	+(await BitcoinWallet.maxSpendable(
         	allowZeroConf, 
@@ -91,8 +90,10 @@ async function withdrawBTC() {
     	amount = (pending < 0) ? amount - pending : amount;
         pay[curConfig.withdraw] = amount;
 
-        console.log(pay);
-
+    } catch(e) {
+    	//console.log(e.msg);
+    	console.log("BTC: Balanse less than fee. Wait...");
+    }
     if (amount >= curConfig.minAmount) {
 		try {
 			let unlockResult = await BitcoinWallet.unlock({
@@ -129,21 +130,22 @@ async function withdrawBCH() {
 	let curConfig = config.wallets.bitcoincash,
 		pay = {},
 		balance = balances.bitcoincash,
-		pending = balance.pending,
-		allowZeroConf = true,
-		allowZeroConfSelf = true,
-		ADDITIONAL = 1000,
-		options = {
-        	allowZeroConfSelf: allowZeroConfSelf
-    	},
-    	amount = 
-    	+(await BitcoinCashWallet.maxSpendable(
-        	allowZeroConf, 
-        	blocktrail.Wallet.FEE_STRATEGY_OPTIMAL, 
+		pending = balance.pending;
+		
+    try {	
+    	var amount = (balance.confirmed > 0) ? 
+    	+(await BitcoinWallet.maxSpendable(
+        	true, 
+        	blocktrail.Wallet.FEE_STRATEGY_FORCE_FEE, 
         	options
-        )).max;
+        )).max
+    	: 0;
         pay[curConfig.withdraw] = amount;
-     	console.log(amount);
+     	
+    } catch(e) {
+    	//console.log(e);
+    	console.log("BCH: Balanse less than fee. Wait...");
+    }
 	if (amount >= curConfig.minAmount) {
 		try {
 			let unlockResult = await BitcoinCashWallet.unlock({
